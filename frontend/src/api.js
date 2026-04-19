@@ -53,8 +53,21 @@ export async function cartRemove(sessionId, productId) {
   });
 }
 
-export async function checkout(sessionId) {
-  const { data } = await axios.post(apiUrl("/cart/checkout/"), { session_id: sessionId });
+export async function checkout(sessionId, token) {
+  const { data } = await axios.post(apiUrl("/cart/checkout/"), 
+    { session_id: sessionId },
+    { headers: { Authorization: `Token ${token}` } }
+  );
+  return data;
+}
+
+export async function login(username, password) {
+  const { data } = await axios.post(apiUrl("/auth/login/"), { username, password });
+  return data;
+}
+
+export async function register(username, password) {
+  const { data } = await axios.post(apiUrl("/auth/register/"), { username, password });
   return data;
 }
 

@@ -10,6 +10,8 @@ from .views import (
     search_history,
     search_products,
     wishlist_view,
+    register_view,
+    login_view,
 )
 
 urlpatterns = [
@@ -22,4 +24,6 @@ urlpatterns = [
     path("wishlist/", wishlist_view),
     path("feedback/", feedback_view),
     path("interactions/view/", record_product_view),
+    path("auth/register/", register_view),
+    path("auth/login/", login_view),
 ]

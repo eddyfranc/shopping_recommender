@@ -11,6 +11,9 @@ from .models import (
     WishlistItem,
 )
 from .recommender import get_recommendations
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
+from rest_framework.authtoken.models import Token
 
 MAX_SEARCH_RESULTS = 24
 
@@ -254,12 +257,45 @@ def cart_view(request):
 
 
 @api_view(["POST"])
+def register_view(request):
+    username = request.data.get("username")
+    password = request.data.get("password")
+    if not username or not password:
+        return Response({"ok": False, "reason": "username and password required"}, status=400)
+    if User.objects.filter(username=username).exists():
+        return Response({"ok": False, "reason": "username taken"}, status=400)
+    user = User.objects.create_user(username=username, password=password)
+    token, _ = Token.objects.get_or_create(user=user)
+    return Response({"ok": True, "token": token.key, "username": user.username})
+
+@api_view(["POST"])
+def login_view(request):
+    username = request.data.get("username")
+    password = request.data.get("password")
+    user = authenticate(username=username, password=password)
+    if not user:
+        return Response({"ok": False, "reason": "invalid credentials"}, status=401)
+    token, _ = Token.objects.get_or_create(user=user)
+    return Response({"ok": True, "token": token.key, "username": user.username})
+
+@api_view(["POST"])
 def checkout_sim(request):
+    auth_header = request.META.get("HTTP_AUTHORIZATION", "")
+    if not auth_header.startswith("Token "):
+        return Response({"ok": False, "reason": "Authentication required to checkout"}, status=401)
+    
+    token_key = auth_header.split(" ")[1]
+    try:
+        token = Token.objects.get(key=token_key)
+        user = token.user
+    except Token.DoesNotExist:
+        return Response({"ok": False, "reason": "Invalid token"}, status=401)
+
     session_key = _session({}, request.data)
     if not session_key:
-        return Response({"ok": False}, status=400)
+        return Response({"ok": False, "reason": "session_id required"}, status=400)
     n, _ = CartItem.objects.filter(session_key=session_key).delete()
-    return Response({"ok": True, "message": f"Checkout simulated — {n} line(s) cleared (prototype)."})
+    return Response({"ok": True, "message": f"Checkout simulated for {user.username} — {n} line(s) cleared (prototype)."})
 
 
 @api_view(["GET", "POST"])

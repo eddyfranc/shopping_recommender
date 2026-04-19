@@ -57,7 +57,7 @@ export default function HomePage() {
     startTransition(() => {
       void runSearch({});
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, [sessionId]);
 
   const filterRecs = useMemo(() => {
@@ -74,7 +74,7 @@ export default function HomePage() {
           <h1 className="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
             Shop
           </h1>
-          <p className="mt-2 text-sm text-slate-600">Search the catalog — personalized picks below.</p>
+          <p className="mt-2 text-sm text-slate-600">Search the catalog.</p>
 
           <div className="mx-auto mt-8 flex max-w-lg flex-col gap-3 sm:flex-row sm:items-center">
             <input
@@ -104,11 +104,10 @@ export default function HomePage() {
                   setCategory(cat);
                   runSearch({ category: cat });
                 }}
-                className={`rounded-full px-4 py-2 text-sm font-medium transition ${
-                  category === cat
+                className={`rounded-full px-4 py-2 text-sm font-medium transition ${category === cat
                     ? "bg-blue-600 text-white shadow-md shadow-blue-600/25"
                     : "bg-white text-slate-700 shadow-sm ring-1 ring-slate-200/80 hover:bg-slate-50"
-                }`}
+                  }`}
               >
                 {cat}
               </button>

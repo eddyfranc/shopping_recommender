@@ -4,6 +4,7 @@ import { useApp } from "./context/useApp";
 import CheckoutPage from "./pages/CheckoutPage";
 import HomePage from "./pages/HomePage";
 import ProductDetailPage from "./pages/ProductDetailPage";
+import LoginPage from "./pages/LoginPage";
 
 function Shell() {
   const { cartCount } = useApp();
@@ -26,6 +27,7 @@ function Shell() {
         <Route path="/" element={<HomePage />} />
         <Route path="/product/:id" element={<ProductDetailPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/login" element={<LoginPage />} />
       </Routes>
     </div>
   );
