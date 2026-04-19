@@ -80,7 +80,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'recommender_db',
-        'USER': 'franky',
+        'USER': 'postgres',
         'PASSWORD': 'Reigns3#',
         'HOST': 'localhost',
         'PORT': '5432',
