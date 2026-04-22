@@ -1,17 +1,6 @@
 from django.urls import path
 
-from .views import (
-    cart_view,
-    checkout_sim,
-    feedback_view,
-    product_detail,
-    recent_views,
-    record_product_view,
-    search_history,
-    search_products,
-    wishlist_view,
-    register_view,
-    login_view,
+from .views import (cart_view, checkout_sim, product_detail, recent_views, record_product_view, search_history,search_products, wishlist_view,register_view, login_view,
 )
 
 urlpatterns = [
@@ -22,7 +11,6 @@ urlpatterns = [
     path("cart/", cart_view),
     path("cart/checkout/", checkout_sim),
     path("wishlist/", wishlist_view),
-    path("feedback/", feedback_view),
     path("interactions/view/", record_product_view),
     path("auth/register/", register_view),
     path("auth/login/", login_view),

@@ -146,8 +146,8 @@ export default function HomePage() {
                 type="button"
                 onClick={() => { setCategory(cat); runSearch({ category: cat }); }}
                 className={`rounded-full px-4 py-1.5 text-sm font-medium transition-all duration-200 ${category === cat
-                    ? "bg-violet-600 text-white shadow-lg shadow-violet-600/30"
-                    : "border border-white/10 bg-white/[0.05] text-white/60 hover:bg-white/10 hover:text-white"
+                  ? "bg-violet-600 text-white shadow-lg shadow-violet-600/30"
+                  : "border border-white/10 bg-white/[0.05] text-white/60 hover:bg-white/10 hover:text-white"
                   }`}
               >
                 {cat}
@@ -173,9 +173,7 @@ export default function HomePage() {
                 ✦ Hybrid AI
               </span>
             </div>
-            <p className="text-xs text-white/35">
-              Personalised by content similarity &amp; collaborative filtering
-            </p>
+
             {!loading && filterRecs.length > 0 && <EngineBreakdown recs={filterRecs} />}
           </div>
 

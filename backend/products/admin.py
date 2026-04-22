@@ -1,16 +1,17 @@
 from django.contrib import admin
-
-# Register your models here.
-from .models import CartItem, Interaction, InteractionLog, Product, ProductFeedback, WishlistItem
+from .models import CartItem, Interaction, InteractionLog, Product, WishlistItem
 
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = ("name", "category", "price", "rating", "view_count", "created_at")
     search_fields = ("name", "category", "description")
+    list_filter = ("category", "rating")
 
 
-admin.site.register(Interaction)
+@admin.register(Interaction)
+class InteractionAdmin(admin.ModelAdmin):
+    pass
 
 
 @admin.register(InteractionLog)
@@ -21,6 +22,13 @@ class InteractionLogAdmin(admin.ModelAdmin):
     readonly_fields = ("created_at",)
 
 
-admin.site.register(CartItem)
-admin.site.register(WishlistItem)
-admin.site.register(ProductFeedback)
+@admin.register(CartItem)
+class CartItemAdmin(admin.ModelAdmin):
+    list_display = ("id", "product", "quantity", "created_at")
+    search_fields = ("product__name",)
+
+
+@admin.register(WishlistItem)
+class WishlistItemAdmin(admin.ModelAdmin):
+    list_display = ("id", "product", "created_at")
+    search_fields = ("product__name",)

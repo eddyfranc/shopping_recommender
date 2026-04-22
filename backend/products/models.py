@@ -1,164 +1,107 @@
 from django.db import models
-
 from django.utils import timezone
 
 
-
-
-
 class Product(models.Model):
-
     name = models.CharField(max_length=255)
-
-    category = models.CharField(max_length=100)
-
+    category = models.CharField(max_length=100, db_index=True)
     description = models.TextField()
-
     price = models.FloatField()
-
     image = models.URLField(max_length=500, blank=True)
-
     rating = models.FloatField(default=4.5)
-
+    view_count = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(default=timezone.now)
 
-    view_count = models.PositiveIntegerField(default=0)
-
-
-
     class Meta:
-
         ordering = ["-created_at"]
 
-
-
+    def __str__(self):
+        return self.name
 
 
 class Interaction(models.Model):
+    ACTION_CHOICES = [
+        ("view", "View"),
+        ("click", "Click"),
+        ("purchase", "Purchase"),
+    ]
 
-    user_id = models.IntegerField()
+    user_id = models.IntegerField(db_index=True)
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        related_name="interactions"
+    )
+    action = models.CharField(max_length=20, choices=ACTION_CHOICES)
+    created_at = models.DateTimeField(auto_now_add=True)
 
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-
-    action = models.CharField(max_length=50)
-
-
-
+    def __str__(self):
+        return f"User {self.user_id} - {self.product.name} ({self.action})"
 
 
 class InteractionLog(models.Model):
-
-    """Anonymous session events for personalization (search queries and product views)."""
-
-
+    ACTION_CHOICES = [
+        ("search", "Search"),
+        ("product_view", "Product View"),
+    ]
 
     session_key = models.CharField(max_length=64, db_index=True)
-
-    action = models.CharField(max_length=32)  # search | product_view
-
+    action = models.CharField(max_length=32, choices=ACTION_CHOICES)
     query = models.CharField(max_length=500, blank=True)
-
     product = models.ForeignKey(
-
-        Product, null=True, blank=True, on_delete=models.CASCADE, related_name="interaction_logs"
-
+        Product,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name="interaction_logs"
     )
-
     created_at = models.DateTimeField(auto_now_add=True)
 
-
-
     class Meta:
-
         ordering = ["-created_at"]
 
-
-
+    def __str__(self):
+        return f"{self.session_key} - {self.action}"
 
 
 class CartItem(models.Model):
-
     session_key = models.CharField(max_length=64, db_index=True)
-
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="cart_items")
-
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        related_name="cart_items"
+    )
     quantity = models.PositiveSmallIntegerField(default=1)
-
-
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-
         constraints = [
-
-            models.UniqueConstraint(fields=["session_key", "product"], name="unique_cart_session_product"),
-
+            models.UniqueConstraint(
+                fields=["session_key", "product"],
+                name="unique_cart_session_product"
+            ),
         ]
 
-
-
+    def __str__(self):
+        return f"{self.product.name} x {self.quantity}"
 
 
 class WishlistItem(models.Model):
-
     session_key = models.CharField(max_length=64, db_index=True)
-
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="wishlist_items")
-
-
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        related_name="wishlist_items"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-
         constraints = [
-
-            models.UniqueConstraint(fields=["session_key", "product"], name="unique_wishlist_session_product"),
-
+            models.UniqueConstraint(
+                fields=["session_key", "product"],
+                name="unique_wishlist_session_product"
+            ),
         ]
 
-
-
-
-
-class ProductFeedback(models.Model):
-
-    LIKE = "like"
-
-    DISLIKE = "dislike"
-
-    NOT_INTERESTED = "not_interested"
-
-    RATED = "rated"
-
-    FEEDBACK_TYPES = [
-
-        (LIKE, "like"),
-
-        (DISLIKE, "dislike"),
-
-        (NOT_INTERESTED, "not_interested"),
-
-        (RATED, "rated"),
-
-    ]
-
-
-
-    session_key = models.CharField(max_length=64, db_index=True)
-
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="feedback_entries")
-
-    feedback_type = models.CharField(max_length=24, choices=FEEDBACK_TYPES)
-
-    rating = models.FloatField(null=True, blank=True)
-
-    updated_at = models.DateTimeField(auto_now=True)
-
-
-
-    class Meta:
-
-        constraints = [
-
-            models.UniqueConstraint(fields=["session_key", "product"], name="unique_feedback_session_product"),
-
-        ]
-
+    def __str__(self):
+        return self.product.name
