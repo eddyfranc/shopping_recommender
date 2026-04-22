@@ -1,7 +1,8 @@
 import axios from "axios";
 
 // export const API_BASE = (import.meta.env.VITE_API_URL ?? "/api").replace(/\/$/, "");
-export const API_BASE = "https://shoppingrecommender-production.up.railway.app/api";
+// export const API_BASE = "https://shoppingrecommender-production.up.railway.app/api";
+export const API_BASE = (import.meta.env.VITE_API_URL ?? "/api").replace(/\/$/, "");
 
 export function apiUrl(path) {
   const p = path.startsWith("/") ? path : `/${path}`;
